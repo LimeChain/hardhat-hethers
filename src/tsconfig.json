@@ -1,5 +1,5 @@
 {
-  "extends": "../../../config/typescript/tsconfig.json",
+  "extends": "./../tsconfig-common.json",
   "compilerOptions": {
     "outDir": "../",
     "rootDirs": [
@@ -8,10 +8,5 @@
     "composite": true
   },
   "include": ["./**/*.ts"],
-  "exclude": [],
-  "references": [
-    {
-      "path": "../../hardhat-core/src"
-    }
-  ]
+  "exclude": []
 }
