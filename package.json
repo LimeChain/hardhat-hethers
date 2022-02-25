@@ -1,10 +1,10 @@
 {
-  "name": "@nomiclabs/hardhat-ethers",
-  "version": "2.0.5",
-  "description": "Hardhat plugin for ethers",
-  "homepage": "https://github.com/nomiclabs/hardhat/tree/master/packages/hardhat-ethers",
-  "repository": "github:nomiclabs/hardhat",
-  "author": "Nomic Labs LLC",
+  "name": "@limechain/hardhat-hethers",
+  "version": "1.0.0",
+  "description": "Hardhat plugin for hethers",
+  "homepage": "https://github.com/LimeChain/hardhat-hethers",
+  "repository": "github:LimeChain/hardhat-hethers",
+  "author": "LimeChain",
   "license": "MIT",
   "main": "internal/index.js",
   "types": "internal/index.d.ts",
@@ -33,7 +33,7 @@
     "*.d.ts.map",
     "*.js",
     "*.js.map",
-    "hardhat-ethers/LICENSE",
+    "LICENSE",
     "README.md"
   ],
   "devDependencies": {
