@@ -1,12 +1,14 @@
-import type { hethers } from "@hashgraph/hethers";
-import { NomicLabsHardhatPluginError } from "hardhat/plugins";
-// import {
+// import {NomicLabsHardhatPluginError} from "hardhat/plugins";
+// const {hethers} = require("@hashgraph/hethers");
+import {
 //   Artifact,
-//   HardhatRuntimeEnvironment,
-//   NetworkConfig,
-// } from "hardhat/types";
-//
-// import type { SignerWithAddress } from "../signers";
+    HardhatRuntimeEnvironment,
+    // NetworkConfig,
+} from "hardhat/types";
+
+import type {SignerWithAddress} from "../signers";
+import {HederaHardhatRuntimeEnvironment} from "./type-extensions";
+import {hethers} from "@hashgraph/hethers";
 // import type { FactoryOptions, Libraries } from "../types";
 //
 // interface Link {
@@ -38,33 +40,40 @@ import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 //     deployedLinkReferences !== undefined
 //   );
 // }
-//
-// export async function getSigners(
-//   hre: HardhatRuntimeEnvironment
-// ): Promise<SignerWithAddress[]> {
-//   const accounts = await hre.hethers.provider.listAccounts();
-//
-//   const signersWithAddress = await Promise.all(
-//     accounts.map((account) => getSigner(hre, account))
-//   );
-//
-//   return signersWithAddress;
-// }
-//
-// export async function getSigner(
-//   hre: HardhatRuntimeEnvironment,
-//   address: string
-// ): Promise<SignerWithAddress> {
-//   const { SignerWithAddress: SignerWithAddressImpl } = await import(
-//     "../signers"
-//   );
-//
-//   const signer = hre.hethers.provider.getSigner(address);
-//
-//   const signerWithAddress = await SignerWithAddressImpl.create(signer);
-//
-//   return signerWithAddress;
-// }
+
+export function getInitialHederaProvider(hre: HederaHardhatRuntimeEnvironment) {
+    const networkName = hre.hardhatArguments.network || hre.config.defaultNetwork;
+
+    if (hre.config.networks[networkName].nodes && hre.config.networks[networkName].chainId) {
+        console.log(hre.config.networks[networkName].nodes);
+    }
+
+    return hethers.getDefaultProvider(networkName);
+}
+
+export async function getSigners(
+    hre: HardhatRuntimeEnvironment
+): Promise<SignerWithAddress[]> {
+    // @ts-ignore
+    const accounts = hre.network.provider.listAccounts();
+
+    return await Promise.all(
+        accounts.map((identifier: any) => getSigner(hre, identifier))
+    );
+}
+
+export async function getSigner(
+    hre: HardhatRuntimeEnvironment,
+    identifier: any
+): Promise<SignerWithAddress> {
+    const {SignerWithAddress: SignerWithAddressImpl} = await import("../signers");
+
+    // @ts-ignore
+    const signer = hre.network.provider.getSigner(identifier);
+
+    return await SignerWithAddressImpl.create(signer);
+}
+
 //
 // export function getContractFactory(
 //   hre: HardhatRuntimeEnvironment,
