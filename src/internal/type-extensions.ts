@@ -1,6 +1,6 @@
 import type {hethers} from "@hashgraph/hethers";
-import {HardhatConfig, Network} from "hardhat/types";
-import {HardhatRuntimeEnvironment} from "hardhat/types/runtime";
+import {HardhatConfig} from "hardhat/types/config";
+import {HardhatRuntimeEnvironment, Network} from "hardhat/types/runtime";
 
 // import type {
 //   FactoryOptions as FactoryOptionsT,
@@ -9,9 +9,28 @@ import {HardhatRuntimeEnvironment} from "hardhat/types/runtime";
 //   Libraries as LibrariesT,
 // } from "../types";
 
-interface HederaConfig {
+export interface HederaAccount {
+    account?: string;
+    address?: string;
+    alias?: string;
+    privateKey: string;
+}
+
+export interface HederaNetwork {
+    accounts?: Array<HederaAccount>;
+    nodeId?: string;
+    consensusNodeUrl?: string;
+    mirrorNodeUrl?: string;
+    chainId?: number;
+}
+
+export interface HederaNetworks {
+    [name: string]: HederaNetwork
+}
+
+export interface HederaConfig {
     gasLimit: number;
-    networks: any;
+    networks: HederaNetworks;
 }
 
 export interface HederaHardhatConfig extends HardhatConfig {
@@ -19,12 +38,12 @@ export interface HederaHardhatConfig extends HardhatConfig {
     networks: any;
 }
 
-interface HederaNetwork extends Network {
+interface HederaNetworkInterface extends Network {
     provider: any;
 }
 
 export interface HederaHardhatRuntimeEnvironment extends HardhatRuntimeEnvironment {
     hethers?: typeof hethers;
-    network: HederaNetwork;
-    config: HederaHardhatConfig
+    config: HederaHardhatConfig;
+    network: HederaNetworkInterface;
 }

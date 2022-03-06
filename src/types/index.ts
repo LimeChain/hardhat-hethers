@@ -4,20 +4,20 @@ import type * as hethers from "@hashgraph/hethers";
 // import type { SignerWithAddress } from "../signers";
 
 export interface Libraries {
-  [libraryName: string]: string;
+    [libraryName: string]: string;
 }
 
 export interface FactoryOptions {
-  signer?: hethers.Signer;
-  libraries?: Libraries;
+    signer?: hethers.Signer;
+    libraries?: Libraries;
 }
 
 export declare function getContractFactory(
-  name: string,
-  signerOrOptions?: hethers.Signer | FactoryOptions
+    name: string,
+    signerOrOptions?: hethers.Signer | FactoryOptions
 ): Promise<hethers.ContractFactory>;
 export declare function getContractFactory(
-  abi: any[],
-  bytecode: hethers.utils.BytesLike,
-  signer?: hethers.Signer
+    abi: any[],
+    bytecode: hethers.utils.BytesLike,
+    signer?: hethers.Signer
 ): Promise<hethers.ContractFactory>;

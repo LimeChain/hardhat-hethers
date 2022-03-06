@@ -1,4 +1,4 @@
-// import {NomicLabsHardhatPluginError} from "hardhat/plugins";
+import {NomicLabsHardhatPluginError} from "hardhat/plugins";
 // const {hethers} = require("@hashgraph/hethers");
 import {
 //   Artifact,
@@ -44,6 +44,10 @@ import {hethers} from "@hashgraph/hethers";
 export function getInitialHederaProvider(hre: HederaHardhatRuntimeEnvironment): hethers.providers.BaseProvider {
     const networkName = hre.hardhatArguments.network || hre.config.defaultNetwork;
 
+    if (['mainnet', 'testnet', 'previewnet'].indexOf(networkName.toLocaleLowerCase()) > -1) {
+        return hethers.getDefaultProvider(networkName);
+    }
+
     const {nodeId, consensusNodeUrl, mirrorNodeUrl, chainId} = hre.config.networks[networkName];
     if (nodeId && consensusNodeUrl && mirrorNodeUrl && chainId) {
         let provider = new hethers.providers.HederaProvider(nodeId, consensusNodeUrl, mirrorNodeUrl);
@@ -53,7 +57,9 @@ export function getInitialHederaProvider(hre: HederaHardhatRuntimeEnvironment): 
         return provider;
     }
 
-    return hethers.getDefaultProvider(networkName);
+    // TODO: implement hardhat network
+    // currently we don't support `hardhat` network, so just get the testnet as fallback
+    return hethers.getDefaultProvider('testnet');
 }
 
 export async function getSigners(
