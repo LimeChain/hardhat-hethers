@@ -41,11 +41,16 @@ import {hethers} from "@hashgraph/hethers";
 //   );
 // }
 
-export function getInitialHederaProvider(hre: HederaHardhatRuntimeEnvironment) {
+export function getInitialHederaProvider(hre: HederaHardhatRuntimeEnvironment): hethers.providers.BaseProvider {
     const networkName = hre.hardhatArguments.network || hre.config.defaultNetwork;
 
-    if (hre.config.networks[networkName].nodes && hre.config.networks[networkName].chainId) {
-        console.log(hre.config.networks[networkName].nodes);
+    const {nodeId, consensusNodeUrl, mirrorNodeUrl, chainId} = hre.config.networks[networkName];
+    if (nodeId && consensusNodeUrl && mirrorNodeUrl && chainId) {
+        let provider = new hethers.providers.HederaProvider(nodeId, consensusNodeUrl, mirrorNodeUrl);
+        provider._network.name = networkName;
+        provider._network.chainId = chainId;
+
+        return provider;
     }
 
     return hethers.getDefaultProvider(networkName);
