@@ -16,10 +16,15 @@ export interface HederaAccount {
     privateKey: string;
 }
 
+export interface HederaNodeConfig {
+    url: string;
+    nodeId: string;
+}
+
 export interface HederaNetwork {
     accounts?: Array<HederaAccount>;
     nodeId?: string;
-    consensusNodeUrl?: string;
+    consensusNodes?: Array<HederaNodeConfig>;
     mirrorNodeUrl?: string;
     chainId?: number;
 }

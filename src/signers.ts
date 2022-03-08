@@ -1,4 +1,5 @@
 import {hethers} from "@hashgraph/hethers";
+import {HederaAccount} from "./internal/type-extensions";
 
 export class SignerWithAddress extends hethers.Wallet {
     public static async create(signer: hethers.Wallet) {
@@ -6,9 +7,10 @@ export class SignerWithAddress extends hethers.Wallet {
     }
 
     constructor(
-        public readonly identity: any,
+        public readonly identity: HederaAccount,
         private readonly _signer: hethers.Signer
     ) {
+        // @ts-ignore
         super(identity, _signer.provider);
     }
 

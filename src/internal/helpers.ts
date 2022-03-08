@@ -7,10 +7,9 @@ import {
 } from "hardhat/types";
 
 import type {SignerWithAddress} from "../signers";
-import {HederaHardhatRuntimeEnvironment} from "./type-extensions";
+import {HederaHardhatRuntimeEnvironment, HederaNodeConfig} from "./type-extensions";
 import {hethers} from "@hashgraph/hethers";
-// import type { FactoryOptions, Libraries } from "../types";
-//
+
 // interface Link {
 //   sourceName: string;
 //   libraryName: string;
@@ -43,14 +42,21 @@ import {hethers} from "@hashgraph/hethers";
 
 export function getInitialHederaProvider(hre: HederaHardhatRuntimeEnvironment): hethers.providers.BaseProvider {
     const networkName = hre.hardhatArguments.network || hre.config.defaultNetwork;
-
     if (['mainnet', 'testnet', 'previewnet'].indexOf(networkName.toLocaleLowerCase()) > -1) {
         return hethers.getDefaultProvider(networkName);
     }
 
-    const {nodeId, consensusNodeUrl, mirrorNodeUrl, chainId} = hre.config.networks[networkName];
-    if (nodeId && consensusNodeUrl && mirrorNodeUrl && chainId) {
-        let provider = new hethers.providers.HederaProvider(nodeId, consensusNodeUrl, mirrorNodeUrl);
+    const {consensusNodes, mirrorNodeUrl, chainId} = hre.config.networks[networkName];
+    if (consensusNodes?.length && mirrorNodeUrl && chainId && consensusNodes.length) {
+        let cnNetworkConfig: {[url: string]: string} = {};
+        consensusNodes.forEach((obj: HederaNodeConfig) => {
+            cnNetworkConfig[obj.url] = obj.nodeId;
+        });
+
+        let provider = new hethers.providers.BaseProvider({
+            network: cnNetworkConfig,
+            mirrorNodeUrl: mirrorNodeUrl,
+        });
         provider._network.name = networkName;
         provider._network.chainId = chainId;
 
