@@ -1,12 +1,21 @@
 import {hethers} from "@hashgraph/hethers";
-import * as hre from "hardhat";
 import {HederaAccount} from "./type-extensions";
 
 export class HethersProviderWrapper extends hethers.providers.BaseProvider {
     private readonly _hardhatProvider: hethers.providers.BaseProvider;
 
     constructor(hardhatProvider: hethers.providers.BaseProvider) {
-        super(hardhatProvider.getNetwork());
+        let networkConfig: { [url: string]: string } = {};
+        hardhatProvider.getHederaClient()._network._network.forEach((obj: any) => {
+            networkConfig[obj[0]._address._address] = obj[0]._accountId.toString();
+        });
+
+        super({
+            network: networkConfig,
+            mirrorNodeUrl: hardhatProvider.getHederaClient().mirrorNetwork[0]
+        });
+        this._network.chainId = hardhatProvider._network.chainId;
+
         this._hardhatProvider = hardhatProvider;
     }
 
@@ -16,6 +25,7 @@ export class HethersProviderWrapper extends hethers.providers.BaseProvider {
     }
 
     public listAccounts(): any {
+        const hre = require('hardhat');
         return hre.config.networks[this._hardhatProvider._network.name]?.accounts || [];
     }
 }
