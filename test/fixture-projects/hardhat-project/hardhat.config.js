@@ -7,6 +7,7 @@ module.exports = {
     gasLimit: 50000,
     networks: {
       testnet: {
+        gas: 100000,
         accounts: [
           {
             "account": "0.0.29631749",
