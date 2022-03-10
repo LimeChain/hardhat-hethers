@@ -6,6 +6,7 @@ import {assert} from 'chai';
 // import util from 'util';
 // import {HethersProviderWrapper} from '../src/internal/hethers-provider-wrapper';
 import {useEnvironment} from './helpers';
+import {SignerWithAddress} from "../signers";
 
 describe('Hethers plugin', function () {
     useEnvironment('hardhat-project', 'testnet');
@@ -13,6 +14,43 @@ describe('Hethers plugin', function () {
         it('should be able to call getBalance()', async function () {
             let balance = (await this.env.hethers.provider.getBalance('0.0.28542425')).toString();
             assert.strictEqual(balance > 0, true);
+        });
+    });
+    describe('Signers', function () {
+        it('should be able to get all signers', async function () {
+            const signers = await this.env.hethers.getSigners();
+
+            assert.strictEqual(signers.length, 2);
+            assert.strictEqual(signers[0].constructor.name, 'SignerWithAddress');
+        });
+    });
+    describe('Signer', function () {
+        let signer: SignerWithAddress;
+        it('should be able to get a signer via accountId and privateKey', async function () {
+            signer = await this.env.hethers.getSigner({
+                "account": "0.0.29631749",
+                "privateKey": "0x18a2ac384f3fa3670f71fc37e2efbf4879a90051bb0d437dd8cbd77077b24d9b"
+            });
+
+            assert.strictEqual(signer.constructor.name, 'SignerWithAddress');
+        });
+        it('should be able to sign a transaction', async function () {
+            const signedTx = await signer.signTransaction({
+                to: '0.0.29631750',
+                value: 1000
+            });
+
+            assert.strictEqual(signedTx != null && signedTx != '0x', true);
+        });
+        it('should be able to transfer tokens with the signer', async function () {
+            const balanceBefore = (await this.env.hethers.provider.getBalance('0.0.29631750')).toString();
+            await signer.sendTransaction({
+                to: '0.0.29631750',
+                value: 1000
+            });
+            const balanceAfter = (await this.env.hethers.provider.getBalance('0.0.29631750')).toString();
+
+            assert.strictEqual(balanceAfter - balanceBefore, 1000);
         });
     });
 });
