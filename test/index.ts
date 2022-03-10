@@ -1,116 +1,59 @@
-// import { assert } from "chai";
-// import type { hethers } from "@hashgraph/hethers";
-// import { NomicLabsHardhatPluginError } from "hardhat/plugins";
-// import { Artifact } from "hardhat/types";
-// import util from "util";
-//
-// import { HethersProviderWrapper } from "../src/internal/hethers-provider-wrapper";
-//
-// import { useEnvironment } from "./helpers";
-//
-// describe("Ethers plugin", function () {
-//   describe("ganache", function () {
-//     useEnvironment("hardhat-project");
-//     describe("HRE extensions", function () {
-//       it("should extend hardhat runtime environment", function () {
-//         assert.isDefined(this.env.ethers);
-//         assert.containsAllKeys(this.env.ethers, [
-//           "provider",
-//           "getSigners",
-//           "getContractFactory",
-//           "getContractAt",
-//           ...Object.keys(ethers),
-//         ]);
-//       });
-//
-//       describe("Custom formatters", function () {
-//         const assertBigNumberFormat = function (
-//           BigNumber: any,
-//           value: string | number,
-//           expected: string
-//         ) {
-//           assert.equal(util.format("%o", BigNumber.from(value)), expected);
-//         };
-//
-//         describe("BigNumber", function () {
-//           it("should format zero unaltered", function () {
-//             assertBigNumberFormat(
-//               this.env.ethers.BigNumber,
-//               0,
-//               'BigNumber { value: "0" }'
-//             );
-//           });
-//
-//           it("should provide human readable versions of positive integers", function () {
-//             const BigNumber = this.env.ethers.BigNumber;
-//
-//             assertBigNumberFormat(BigNumber, 1, 'BigNumber { value: "1" }');
-//             assertBigNumberFormat(BigNumber, 999, 'BigNumber { value: "999" }');
-//             assertBigNumberFormat(
-//               BigNumber,
-//               1000,
-//               'BigNumber { value: "1000" }'
-//             );
-//             assertBigNumberFormat(
-//               BigNumber,
-//               999999,
-//               'BigNumber { value: "999999" }'
-//             );
-//             assertBigNumberFormat(
-//               BigNumber,
-//               1000000,
-//               'BigNumber { value: "1000000" }'
-//             );
-//             assertBigNumberFormat(
-//               BigNumber,
-//               "999999999999999999292",
-//               'BigNumber { value: "999999999999999999292" }'
-//             );
-//           });
-//
-//           it("should provide human readable versions of negative integers", function () {
-//             const BigNumber = this.env.ethers.BigNumber;
-//
-//             assertBigNumberFormat(BigNumber, -1, 'BigNumber { value: "-1" }');
-//             assertBigNumberFormat(
-//               BigNumber,
-//               -999,
-//               'BigNumber { value: "-999" }'
-//             );
-//             assertBigNumberFormat(
-//               BigNumber,
-//               -1000,
-//               'BigNumber { value: "-1000" }'
-//             );
-//             assertBigNumberFormat(
-//               BigNumber,
-//               -999999,
-//               'BigNumber { value: "-999999" }'
-//             );
-//             assertBigNumberFormat(
-//               BigNumber,
-//               -1000000,
-//               'BigNumber { value: "-1000000" }'
-//             );
-//             assertBigNumberFormat(
-//               BigNumber,
-//               "-999999999999999999292",
-//               'BigNumber { value: "-999999999999999999292" }'
-//             );
-//           });
-//         });
-//       });
-//     });
-//
-//     describe("Provider", function () {
-//       it("the provider should handle requests", async function () {
-//         const accounts = await this.env.ethers.provider.send(
-//           "eth_accounts",
-//           []
-//         );
-//         assert.equal(accounts[0], "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1");
-//       });
-//     });
+import 'mocha';
+import {assert} from 'chai';
+// import type {hethers} from '@hashgraph/hethers';
+// import {NomicLabsHardhatPluginError} from 'hardhat/plugins';
+// import {Artifact} from 'hardhat/types';
+// import util from 'util';
+// import {HethersProviderWrapper} from '../src/internal/hethers-provider-wrapper';
+import {useEnvironment} from './helpers';
+import {SignerWithAddress} from "../signers";
+
+describe('Hethers plugin', function () {
+    useEnvironment('hardhat-project', 'testnet');
+    describe('Provider', function () {
+        it('should be able to call getBalance()', async function () {
+            let balance = (await this.env.hethers.provider.getBalance('0.0.28542425')).toString();
+            assert.strictEqual(balance > 0, true);
+        });
+    });
+    describe('Signers', function () {
+        it('should be able to get all signers', async function () {
+            const signers = await this.env.hethers.getSigners();
+
+            assert.strictEqual(signers.length, 2);
+            assert.strictEqual(signers[0].constructor.name, 'SignerWithAddress');
+        });
+    });
+    describe('Signer', function () {
+        let signer: SignerWithAddress;
+        it('should be able to get a signer via accountId and privateKey', async function () {
+            signer = await this.env.hethers.getSigner({
+                "account": "0.0.29631749",
+                "privateKey": "0x18a2ac384f3fa3670f71fc37e2efbf4879a90051bb0d437dd8cbd77077b24d9b"
+            });
+
+            assert.strictEqual(signer.constructor.name, 'SignerWithAddress');
+        });
+        it('should be able to sign a transaction', async function () {
+            const signedTx = await signer.signTransaction({
+                to: '0.0.29631750',
+                value: 1000
+            });
+
+            assert.strictEqual(signedTx != null && signedTx != '0x', true);
+        });
+        it('should be able to transfer tokens with the signer', async function () {
+            const balanceBefore = (await this.env.hethers.provider.getBalance('0.0.29631750')).toString();
+            await signer.sendTransaction({
+                to: '0.0.29631750',
+                value: 1000
+            });
+            const balanceAfter = (await this.env.hethers.provider.getBalance('0.0.29631750')).toString();
+
+            assert.strictEqual(balanceAfter - balanceBefore, 1000);
+        });
+    });
+});
 //
 //     describe("Signers and contracts helpers", function () {
 //       let signers: ethers.Signer[];

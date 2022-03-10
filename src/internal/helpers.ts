@@ -1,14 +1,15 @@
-import type { hethers } from "@hashgraph/hethers";
-import { NomicLabsHardhatPluginError } from "hardhat/plugins";
-// import {
+import {NomicLabsHardhatPluginError} from "hardhat/plugins";
+// const {hethers} = require("@hashgraph/hethers");
+import {
 //   Artifact,
-//   HardhatRuntimeEnvironment,
-//   NetworkConfig,
-// } from "hardhat/types";
-//
-// import type { SignerWithAddress } from "../signers";
-// import type { FactoryOptions, Libraries } from "../types";
-//
+    HardhatRuntimeEnvironment,
+    // NetworkConfig,
+} from "hardhat/types";
+
+import type {SignerWithAddress} from "../signers";
+import {HederaHardhatRuntimeEnvironment, HederaNodeConfig} from "./type-extensions";
+import {hethers} from "@hashgraph/hethers";
+
 // interface Link {
 //   sourceName: string;
 //   libraryName: string;
@@ -38,33 +39,58 @@ import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 //     deployedLinkReferences !== undefined
 //   );
 // }
-//
-// export async function getSigners(
-//   hre: HardhatRuntimeEnvironment
-// ): Promise<SignerWithAddress[]> {
-//   const accounts = await hre.hethers.provider.listAccounts();
-//
-//   const signersWithAddress = await Promise.all(
-//     accounts.map((account) => getSigner(hre, account))
-//   );
-//
-//   return signersWithAddress;
-// }
-//
-// export async function getSigner(
-//   hre: HardhatRuntimeEnvironment,
-//   address: string
-// ): Promise<SignerWithAddress> {
-//   const { SignerWithAddress: SignerWithAddressImpl } = await import(
-//     "../signers"
-//   );
-//
-//   const signer = hre.hethers.provider.getSigner(address);
-//
-//   const signerWithAddress = await SignerWithAddressImpl.create(signer);
-//
-//   return signerWithAddress;
-// }
+
+export function getInitialHederaProvider(hre: HederaHardhatRuntimeEnvironment): hethers.providers.BaseProvider {
+    const networkName = hre.hardhatArguments.network || hre.config.defaultNetwork;
+    if (['mainnet', 'testnet', 'previewnet'].indexOf(networkName.toLocaleLowerCase()) > -1) {
+        return hethers.getDefaultProvider(networkName);
+    }
+
+    const {consensusNodes, mirrorNodeUrl, chainId} = hre.config.networks[networkName];
+    if (consensusNodes?.length && mirrorNodeUrl && chainId && consensusNodes.length) {
+        let cnNetworkConfig: {[url: string]: string} = {};
+        consensusNodes.forEach((obj: HederaNodeConfig) => {
+            cnNetworkConfig[obj.url] = obj.nodeId;
+        });
+
+        let provider = new hethers.providers.BaseProvider({
+            network: cnNetworkConfig,
+            mirrorNodeUrl: mirrorNodeUrl,
+        });
+        provider._network.name = networkName;
+        provider._network.chainId = chainId;
+
+        return provider;
+    }
+
+    // TODO: implement hardhat network
+    // currently we don't support `hardhat` network, so just get the testnet as fallback
+    return hethers.getDefaultProvider('testnet');
+}
+
+export async function getSigners(
+    hre: HardhatRuntimeEnvironment
+): Promise<SignerWithAddress[]> {
+    // @ts-ignore
+    const accounts = hre.network.provider.listAccounts();
+
+    return await Promise.all(
+        accounts.map((identifier: any) => getSigner(hre, identifier))
+    );
+}
+
+export async function getSigner(
+    hre: HardhatRuntimeEnvironment,
+    identifier: any
+): Promise<SignerWithAddress> {
+    const {SignerWithAddress: SignerWithAddressImpl} = await import("../signers");
+
+    // @ts-ignore
+    const signer = hre.network.provider.getSigner(identifier);
+
+    return await SignerWithAddressImpl.create(signer);
+}
+
 //
 // export function getContractFactory(
 //   hre: HardhatRuntimeEnvironment,
