@@ -135,15 +135,16 @@ describe("Hethers plugin", function() {
         );
       });
 
-      it("should allow to use the call method", async function() {
+      it("should not allow to use the call method", async function() {
         const [sig] = await this.env.hethers.getSigners();
 
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
         const tx = Greeter.getDeployTransaction({ gasLimit: 100000 });
-
-        const result = await sig.call(tx);
-
-        assert.isString(result);
+        try {
+          assert.throws(async () => await sig.call(tx));
+        } catch (err) {
+          assert.exists(err);
+        }
       });
 
       it("should send a transaction", async function() {
