@@ -91,6 +91,14 @@ describe("Hethers plugin", function() {
           "0x031477154d6d1be6a6d899f295c049a94f227f97299ac7853e4dbc41a1763fdada"
         );
       });
+
+      it("should expose the address synchronously", async function () {
+        const sigs = await this.env.hethers.getSigners();
+        assert.equal(
+          sigs[0].address,
+          "0x0000000000000000000000000000000001c42505"
+        );
+      });
     });
 
     describe("signer", function() {
@@ -163,7 +171,7 @@ describe("Hethers plugin", function() {
         const [sig] = await this.env.hethers.getSigners();
 
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
-        const tx = Greeter.getDeployTransaction();
+        const tx = Greeter.getDeployTransaction({ gasLimit: 100000 });
 
         const checkedTransaction = sig.checkTransaction(tx);
 
@@ -178,6 +186,7 @@ describe("Hethers plugin", function() {
     });
 
     describe("getContractFactory", function() {
+      this.timeout(60000);
       describe("By name", function() {
         it("should return a contract factory", async function() {
           // It's already compiled in artifacts/
@@ -534,6 +543,9 @@ describe("Hethers plugin", function() {
     });
 
     describe("getContractFactoryFromArtifact", function() {
+
+      this.timeout(60000);
+
       it("should return a contract factory", async function() {
         const contract = await this.env.hethers.getContractFactoryFromArtifact(
           greeterArtifact
@@ -721,28 +733,26 @@ describe("Hethers plugin", function() {
         });
 
         it("Should be able to detect events", async function() {
+          this.timeout(60000)
+
           const greeter = await this.env.hethers.getContractAt(
             greeterArtifact.abi,
             deployedGreeter.address
           );
 
-          // at the time of this writing, hethers' default polling interval is
-          // 4000 ms. here we turn it down in order to speed up this test.
-          // see also
-          // https://github.com/hethers-io/hethers.js/issues/615#issuecomment-848991047
           const provider = greeter.provider as HethersProviderWrapper;
-          provider.pollingInterval = 100;
+          provider.pollingInterval = 1000;
 
           let eventEmitted = false;
           greeter.on("GreetingUpdated", () => {
             eventEmitted = true;
           });
 
-          await greeter.functions.setGreeting("Hola");
+          await greeter.setGreeting("Hola", {gasLimit: 100000});
 
           // wait for 1.5 polling intervals for the event to fire
           await new Promise((resolve) =>
-            setTimeout(resolve, provider.pollingInterval * 2)
+            setTimeout(resolve, provider.pollingInterval * 20)
           );
 
           assert.equal(eventEmitted, true);
@@ -762,6 +772,8 @@ describe("Hethers plugin", function() {
             );
           });
         });
+
+        this.timeout(60000);
 
         it("should work with linked contracts", async function() {
           const libraryFactory = await this.env.hethers.getContractFactory(

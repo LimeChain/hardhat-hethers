@@ -53,8 +53,8 @@ interface HederaNetworkInterface extends Network {
 type HethersT = typeof hethers;
 interface HethersTExtended extends HethersT {
     provider: any,
-    getSigners( hre: HardhatRuntimeEnvironment ): Promise<SignerWithAddress[]>;
-    getSigner(hre: HardhatRuntimeEnvironment, identifier: any): Promise<SignerWithAddress>;
+    getSigners( hre: HederaHardhatRuntimeEnvironment ): Promise<SignerWithAddress[]>;
+    getSigner(hre: HederaHardhatRuntimeEnvironment, identifier: any): Promise<SignerWithAddress>;
 
     getContractFactory(
       hre: HederaHardhatRuntimeEnvironment,
@@ -65,7 +65,7 @@ interface HethersTExtended extends HethersT {
       signer?: hethers.Signer
     ): Promise<hethers.ContractFactory>;
 
-    getContractFactoryFromArtifac(
+    getContractFactoryFromArtifact(
       hre: HardhatRuntimeEnvironment,
       artifact: Artifact,
       signerOrOptions?: hethers.Signer | FactoryOptions

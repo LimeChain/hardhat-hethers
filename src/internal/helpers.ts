@@ -134,7 +134,9 @@ function isFactoryOptions(
   signerOrOptions?: hethers.Signer | FactoryOptions
 ): signerOrOptions is FactoryOptions {
   const { Signer } = require("@hashgraph/hethers") as typeof hethers;
-  if (signerOrOptions === undefined || signerOrOptions instanceof Signer) {
+  const SignerWithAddressObj = require("../signers").SignerWithAddress;
+  // @ts-ignore
+  if (signerOrOptions === undefined || signerOrOptions instanceof Signer || signerOrOptions instanceof SignerWithAddressObj) {
     return false;
   }
 

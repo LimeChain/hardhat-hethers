@@ -2,8 +2,14 @@ import {hethers} from "@hashgraph/hethers";
 import {HederaAccount} from "./internal/type-extensions";
 
 export class SignerWithAddress extends hethers.Wallet {
+    // @ts-ignore
+    address: string;
+
     public static async create(signer: hethers.Wallet) {
-        return new SignerWithAddress(signer._signingKey(), signer);
+        let signerWithAddress = await new SignerWithAddress(signer._signingKey(), signer);
+        // @ts-ignore
+        signerWithAddress.address = signer.address;
+        return signerWithAddress;
     }
 
     constructor(
