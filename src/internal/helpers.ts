@@ -295,6 +295,15 @@ Learn more about linking contracts at https://hardhat.org/plugins/nomiclabs-hard
   return linkBytecode(artifact, [...linksToApply.values()]);
 }
 
+// @ts-ignore
+function defaultNthArgument(fn, n, thisObj, defaultObj) {
+  return function(...args: any) {
+    let overwritten = args[n] || {};
+    overwritten = Object.assign({}, defaultObj, overwritten);
+    return fn.call(thisObj, ...args.slice(0, n-1), overwritten);
+  };
+}
+
 async function getContractFactoryByAbiAndBytecode(
   hre: HederaHardhatRuntimeEnvironment,
   abi: any[],
@@ -310,12 +319,20 @@ async function getContractFactoryByAbiAndBytecode(
     }
   }
 
-  const abiWithAddedGas = addGasToAbiMethodsIfNecessary(
-    hre.network.config,
-    abi
-  );
+  const abiWithAddedGas = addGasToAbiMethodsIfNecessary(hre, abi);
 
-  return new ContractFactory(abiWithAddedGas, bytecode, signer);
+  const contractFactory = new ContractFactory(abiWithAddedGas, bytecode, signer);
+
+  // @ts-ignore
+  const defaultGasLimit = hre.config.hedera.gasLimit;
+
+  // Apply the default gasLimit
+  contractFactory.deploy = defaultNthArgument(
+    contractFactory.deploy,
+    contractFactory.interface.deploy.inputs.length,
+    contractFactory,
+    {gasLimit: defaultGasLimit});
+  return contractFactory;
 }
 
 export async function getContractAt(
@@ -344,10 +361,7 @@ export async function getContractAt(
   const signerOrProvider: hethers.Signer | hethers.providers.Provider =
     signer !== undefined ? signer : hre.hethers?.provider;
 
-  const abiWithAddedGas = addGasToAbiMethodsIfNecessary(
-    hre.network.config,
-    nameOrAbi
-  );
+  const abiWithAddedGas = addGasToAbiMethodsIfNecessary(hre, nameOrAbi);
 
   return new Contract(address, abiWithAddedGas, signerOrProvider);
 }
@@ -385,9 +399,10 @@ export async function getContractAtFromArtifact(
 // This helper adds a `gas` field to the ABI function elements if the network
 // is set up to use a fixed amount of gas.
 function addGasToAbiMethodsIfNecessary(
-  networkConfig: NetworkConfig,
+  hre: HederaHardhatRuntimeEnvironment,
   abi: any[]
 ): any[] {
+  const networkConfig = hre.network.config
   const { BigNumber } = require("@hashgraph/hethers") as typeof hethers;
 
   if (networkConfig.gas === undefined) {
@@ -409,9 +424,12 @@ function addGasToAbiMethodsIfNecessary(
       continue;
     }
 
+    // @ts-ignore
+    const defaultGasLimit = hre.config.hedera.gasLimit;
+
     modifiedAbi.push({
       ...abiElement,
-      gas: networkConfig.gas,
+      gasLimit: defaultGasLimit,
     });
   }
 

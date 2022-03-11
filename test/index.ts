@@ -5,7 +5,7 @@ import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 import { Artifact } from "hardhat/types";
 import { HethersProviderWrapper } from "../src/internal/hethers-provider-wrapper";
 import { useEnvironment } from "./helpers";
-import { SignerWithAddress } from "../signers";
+import { SignerWithAddress } from "../src/signers";
 
 describe("Hethers plugin", function() {
   useEnvironment("hardhat-project", "testnet");
@@ -117,7 +117,7 @@ describe("Hethers plugin", function() {
         const [sig] = await this.env.hethers.getSigners();
 
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
-        const tx = Greeter.getDeployTransaction({ gasLimit: 100000 });
+        const tx = Greeter.getDeployTransaction();
 
         try {
           assert.throws(() => sig.signTransaction(tx));
@@ -139,7 +139,7 @@ describe("Hethers plugin", function() {
         const [sig] = await this.env.hethers.getSigners();
 
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
-        const tx = Greeter.getDeployTransaction({ gasLimit: 100000 });
+        const tx = Greeter.getDeployTransaction();
         try {
           assert.throws(async () => await sig.call(tx));
         } catch (err) {
@@ -151,7 +151,7 @@ describe("Hethers plugin", function() {
         const [sig] = await this.env.hethers.getSigners();
 
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
-        const tx = Greeter.getDeployTransaction({ gasLimit: 100000 });
+        const tx = Greeter.getDeployTransaction();
 
         const response = await sig.sendTransaction(tx);
 
@@ -172,7 +172,7 @@ describe("Hethers plugin", function() {
         const [sig] = await this.env.hethers.getSigners();
 
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
-        const tx = Greeter.getDeployTransaction({ gasLimit: 100000 });
+        const tx = Greeter.getDeployTransaction();
 
         const checkedTransaction = sig.checkTransaction(tx);
 
@@ -232,7 +232,7 @@ describe("Hethers plugin", function() {
           const libraryFactory = await this.env.hethers.getContractFactory(
             "TestLibrary"
           );
-          const library = await libraryFactory.deploy({ gasLimit: 100000 });
+          const library = await libraryFactory.deploy();
 
           const contractFactory = await this.env.hethers.getContractFactory(
             "TestContractLib",
@@ -242,7 +242,7 @@ describe("Hethers plugin", function() {
             await contractFactory.signer.getAddress(),
             await signers[0].getAddress()
           );
-          const numberPrinter = await contractFactory.deploy({ gasLimit: 100000 });
+          const numberPrinter = await contractFactory.deploy();
           const someNumber = 50;
           assert.equal(
             await numberPrinter.callStatic.printNumber(someNumber),
@@ -254,7 +254,7 @@ describe("Hethers plugin", function() {
           const libraryFactory = await this.env.hethers.getContractFactory(
             "contracts/TestContractLib.sol:TestLibrary"
           );
-          const library = await libraryFactory.deploy({ gasLimit: 100000 });
+          const library = await libraryFactory.deploy();
 
           try {
             await this.env.hethers.getContractFactory("TestContractLib", {
@@ -294,7 +294,7 @@ describe("Hethers plugin", function() {
           const libraryFactory = await this.env.hethers.getContractFactory(
             "contracts/TestNonUniqueLib.sol:NonUniqueLibrary"
           );
-          const library = await libraryFactory.deploy({ gasLimit: 100000 });
+          const library = await libraryFactory.deploy();
 
           const contractFactory = await this.env.hethers.getContractFactory(
             "TestNonUniqueLib",
@@ -310,11 +310,11 @@ describe("Hethers plugin", function() {
           const libraryFactory = await this.env.hethers.getContractFactory(
             "contracts/AmbiguousLibrary.sol:AmbiguousLibrary"
           );
-          const library = await libraryFactory.deploy({ gasLimit: 100000 });
+          const library = await libraryFactory.deploy();
           const library2Factory = await this.env.hethers.getContractFactory(
             "contracts/AmbiguousLibrary2.sol:AmbiguousLibrary"
           );
-          const library2 = await library2Factory.deploy({ gasLimit: 100000 });
+          const library2 = await library2Factory.deploy();
 
           try {
             await this.env.hethers.getContractFactory("TestAmbiguousLib", {
@@ -413,7 +413,7 @@ describe("Hethers plugin", function() {
           const libraryFactory = await this.env.hethers.getContractFactory(
             "TestLibrary"
           );
-          const library = await libraryFactory.deploy({ gasLimit: 100000 });
+          const library = await libraryFactory.deploy();
 
           try {
             await this.env.hethers.getContractFactory("TestContractLib", {
@@ -447,7 +447,7 @@ describe("Hethers plugin", function() {
 
         it("Should be able to send txs and make calls", async function() {
           const Greeter = await this.env.hethers.getContractFactory("Greeter");
-          const greeter = await Greeter.deploy({ gasLimit: 100000 });
+          const greeter = await Greeter.deploy();
 
           assert.equal(await greeter.functions.greet(), "Hi");
           await greeter.functions.setGreeting("Hola");
@@ -513,7 +513,7 @@ describe("Hethers plugin", function() {
             greeterArtifact.abi,
             greeterArtifact.bytecode
           );
-          const greeter = await Greeter.deploy({ gasLimit: 100000 });
+          const greeter = await Greeter.deploy();
 
           assert.equal(await greeter.functions.greet(), "Hi");
           await greeter.functions.setGreeting("Hola");
@@ -567,7 +567,7 @@ describe("Hethers plugin", function() {
         const libraryFactory = await this.env.hethers.getContractFactory(
           "TestLibrary"
         );
-        const library = await libraryFactory.deploy({ gasLimit: 100000 });
+        const library = await libraryFactory.deploy();
 
         const testContractLibArtifact = await this.env.artifacts.readArtifact(
           "TestContractLib"
@@ -583,7 +583,7 @@ describe("Hethers plugin", function() {
           await contractFactory.signer.getAddress(),
           await signers[0].getAddress()
         );
-        const numberPrinter = await contractFactory.deploy({ gasLimit: 100000 });
+        const numberPrinter = await contractFactory.deploy();
         const someNumber = 50;
         assert.equal(
           await numberPrinter.callStatic.printNumber(someNumber),
@@ -595,7 +595,7 @@ describe("Hethers plugin", function() {
         const Greeter = await this.env.hethers.getContractFactoryFromArtifact(
           greeterArtifact
         );
-        const greeter = await Greeter.deploy({ gasLimit: 100000 });
+        const greeter = await Greeter.deploy();
 
         assert.equal(await greeter.functions.greet(), "Hi");
         await greeter.functions.setGreeting("Hola");
@@ -628,7 +628,7 @@ describe("Hethers plugin", function() {
 
       beforeEach(async function() {
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
-        deployedGreeter = await Greeter.deploy({ gasLimit: 100000 });
+        deployedGreeter = await Greeter.deploy();
       });
 
       describe("by name and address", function() {
@@ -749,7 +749,7 @@ describe("Hethers plugin", function() {
             eventEmitted = true;
           });
 
-          await greeter.setGreeting("Hola", {gasLimit: 100000});
+          await greeter.setGreeting("Hola");
 
           // wait for 1.5 polling intervals for the event to fire
           await new Promise((resolve) =>
@@ -780,13 +780,13 @@ describe("Hethers plugin", function() {
           const libraryFactory = await this.env.hethers.getContractFactory(
             "TestLibrary"
           );
-          const library = await libraryFactory.deploy({ gasLimit: 100000 });
+          const library = await libraryFactory.deploy();
 
           const contractFactory = await this.env.hethers.getContractFactory(
             "TestContractLib",
             { libraries: { TestLibrary: library.address } }
           );
-          const numberPrinter = await contractFactory.deploy({ gasLimit: 100000 });
+          const numberPrinter = await contractFactory.deploy();
 
           const numberPrinterAtAddress = await this.env.hethers.getContractAt(
             "TestContractLib",
@@ -807,7 +807,7 @@ describe("Hethers plugin", function() {
 
       beforeEach(async function() {
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
-        deployedGreeter = await Greeter.deploy({ gasLimit: 100000 });
+        deployedGreeter = await Greeter.deploy();
       });
 
       describe("by artifact and address", function() {
