@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.4;
 
 import { AmbiguousLibrary as AmbiguousLibrary2 } from "./AmbiguousLibrary2.sol";
 

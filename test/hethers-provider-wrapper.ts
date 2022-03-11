@@ -26,11 +26,13 @@ describe('Hethers provider wrapper', function () {
         try {
             await realProvider.getCode('error_please');
             assert.fail('realProvider should have failed');
-        } catch (err: any) {
+        } catch (_err) {
+            const err = _err as Error;
             try {
                 await wrapperProvider.getCode('error_please');
                 assert.fail('wrapperProvider should have failed');
-            } catch (err2: any) {
+            } catch (_err2) {
+                const err2 = _err2 as Error;
                 assert.deepEqual(err2.message, err.message);
             }
         }

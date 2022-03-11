@@ -5,12 +5,15 @@ import {
     getInitialHederaProvider,
     getSigners,
     getSigner,
-    // getContractAt,
-    // getContractAtFromArtifact,
-    // getContractFactory,
-    // getContractFactoryFromArtifact,
+    getContractAt,
+    getContractAtFromArtifact,
+    getContractFactory,
+    getContractFactoryFromArtifact,
 } from "./helpers";
-import {HederaHardhatConfig, HederaHardhatRuntimeEnvironment} from "./type-extensions";
+import {
+    HederaHardhatConfig,
+    HederaHardhatRuntimeEnvironment
+} from "./type-extensions";
 
 extendConfig(
     (config: HederaHardhatConfig) => {
@@ -21,6 +24,7 @@ extendConfig(
 extendEnvironment((hre: HederaHardhatRuntimeEnvironment) => {
     hre.network.provider = getInitialHederaProvider(hre);
 
+    // @ts-ignore
     hre.hethers = lazyObject(() => {
         const {createProviderProxy} = require("./provider-proxy");
 
@@ -33,10 +37,10 @@ extendEnvironment((hre: HederaHardhatRuntimeEnvironment) => {
             provider: providerProxy,
             getSigners: () => getSigners(hre),
             getSigner: (identifier: any) => getSigner(hre, identifier),
-            // getContractFactory: getContractFactory.bind(null, hre) as any,
-            // getContractFactoryFromArtifact: getContractFactoryFromArtifact.bind(null, hre),
-            // getContractAt: getContractAt.bind(null, hre),
-            // getContractAtFromArtifact: getContractAtFromArtifact.bind(null, hre),
+            getContractFactory: getContractFactory.bind(null, hre) as any,
+            getContractFactoryFromArtifact: getContractFactoryFromArtifact.bind(null, hre),
+            getContractAt: getContractAt.bind(null, hre),
+            getContractAtFromArtifact: getContractAtFromArtifact.bind(null, hre),
         };
     });
 });

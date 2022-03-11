@@ -1,9 +1,20 @@
 import {hethers} from "@hashgraph/hethers";
 import {HederaAccount} from "./internal/type-extensions";
+import { Deferrable } from "@ethersproject/properties";
+import { TransactionRequest } from "@hethers/abstract-provider";
+import { NomicLabsHardhatPluginError } from "hardhat/plugins";
+
+const pluginName = "hardhat-hethers";
 
 export class SignerWithAddress extends hethers.Wallet {
+    // @ts-ignore
+    address: string;
+
     public static async create(signer: hethers.Wallet) {
-        return new SignerWithAddress(signer._signingKey(), signer);
+        let signerWithAddress = await new SignerWithAddress(signer._signingKey(), signer);
+        // @ts-ignore
+        signerWithAddress.address = signer.address;
+        return signerWithAddress;
     }
 
     constructor(
@@ -40,5 +51,15 @@ export class SignerWithAddress extends hethers.Wallet {
 
     public toJSON() {
         return `<SignerWithAddress ${this._signer.getAddress()}>`;
+    }
+
+    public async call(txRequest: Deferrable<TransactionRequest>): Promise<string> {
+        if (!txRequest.to) {
+            throw new NomicLabsHardhatPluginError(
+              pluginName,
+              `The transaction is missing a required field: 'to'`
+            );
+        }
+        return this._signer.call(txRequest);
     }
 }
