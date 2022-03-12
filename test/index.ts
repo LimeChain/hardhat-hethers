@@ -120,11 +120,12 @@ describe("Hethers plugin", function() {
         const tx = Greeter.getDeployTransaction();
 
         try {
-          assert.throws(() => sig.signTransaction(tx));
+          await sig.signTransaction(tx);
         } catch (err) {
           assert.exists(err);
+          return;
         }
-
+        assert.isTrue(false);
       });
 
       it("should return the balance of the account", async function() {
@@ -141,10 +142,12 @@ describe("Hethers plugin", function() {
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
         const tx = Greeter.getDeployTransaction();
         try {
-          assert.throws(async () => await sig.call(tx));
+          await sig.call(tx);
         } catch (err) {
           assert.exists(err);
+          return;
         }
+        assert.isTrue(false);
       });
 
       it("should send a transaction", async function() {
@@ -188,7 +191,7 @@ describe("Hethers plugin", function() {
 
     describe("getContractFactory", function() {
       this.timeout(60000);
-      describe("By name", function() {
+      describe("by name", function() {
         it("should return a contract factory", async function() {
           // It's already compiled in artifacts/
           const contract = await this.env.hethers.getContractFactory(

@@ -332,6 +332,14 @@ async function getContractFactoryByAbiAndBytecode(
     contractFactory.interface.deploy.inputs.length,
     contractFactory,
     {gasLimit: defaultGasLimit});
+
+    contractFactory.getDeployTransaction = defaultNthArgument(
+        contractFactory.getDeployTransaction,
+        contractFactory.interface.deploy.inputs.length,
+        contractFactory,
+        {gasLimit: defaultGasLimit}
+    );
+
   return contractFactory;
 }
 

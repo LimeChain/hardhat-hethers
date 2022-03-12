@@ -10,6 +10,11 @@ export class SignerWithAddress extends hethers.Wallet {
     address: string;
 
     private populateDefaultGasLimit(tx: TransactionRequest): TransactionRequest {
+        // do not force add gasLimit, if the user wants to execute a simple crypto transfer
+        if (tx.to && tx.value && Object.keys(tx).length == 2) {
+            return tx;
+        }
+
         if (!tx.gasLimit) {
             const env = require('hardhat');
             if (!env.config.hedera.gasLimit) {
