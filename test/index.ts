@@ -5,7 +5,7 @@ import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 import { Artifact } from "hardhat/types";
 import { HethersProviderWrapper } from "../src/internal/hethers-provider-wrapper";
 import { useEnvironment } from "./helpers";
-import { SignerWithAddress } from "../src/signers";
+import { SignerWithAddress } from "../src/internal/signers";
 
 describe("Hethers plugin", function() {
   useEnvironment("hardhat-project", "testnet");
@@ -46,11 +46,11 @@ describe("Hethers plugin", function() {
       const balanceBefore = (await this.env.hethers.provider.getBalance("0.0.29631750")).toString();
       await signer.sendTransaction({
         to: "0.0.29631750",
-        value: 1000
+        value: 142
       });
       const balanceAfter = (await this.env.hethers.provider.getBalance("0.0.29631750")).toString();
 
-      assert.strictEqual(balanceAfter - balanceBefore, 1000);
+      assert.strictEqual(balanceAfter - balanceBefore, 142);
     });
   });
 
