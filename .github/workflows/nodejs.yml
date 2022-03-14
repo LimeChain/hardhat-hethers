@@ -5,6 +5,12 @@ on:
     branches: [master, develop]
   pull_request:
 
+env:
+  testnet_account_id_1: ${{ secrets.TESTNET_ACCOUNT_ID_1 }}
+  testnet_privatekey_1: ${{ secrets.TESTNET_PRIVATEKEY_1 }}
+  testnet_account_id_2: ${{ secrets.TESTNET_ACCOUNT_ID_2 }}
+  testnet_privatekey_2: ${{ secrets.TESTNET_PRIVATEKEY_2 }}
+
 jobs:
 
   test-node:
@@ -34,4 +40,4 @@ jobs:
         run: npm run build
 
       - name: Run tests
-        run: npm run test
+        run: TESTNET_ACCOUNT_ID_1=$testnet_account_id_1 TESTNET_PRIVATEKEY_1=$testnet_privatekey_1 TESTNET_ACCOUNT_ID_2=$testnet_account_id_2 TESTNET_PRIVATEKEY_2=$testnet_privatekey_2 npm run test

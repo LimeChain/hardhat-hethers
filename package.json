@@ -44,6 +44,7 @@
     "@typescript-eslint/eslint-plugin": "4.29.2",
     "@typescript-eslint/parser": "4.29.2",
     "chai": "^4.2.0",
+    "dotenv": "^16.0.0",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.24.1",
@@ -56,7 +57,7 @@
     "typescript": "~4.5.2"
   },
   "peerDependencies": {
-    "@hashgraph/hethers": "^1.0.0",
+    "@hashgraph/hethers": "^1.0.3",
     "hardhat": "^2.0.0"
   }
 }

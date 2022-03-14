@@ -1,17 +1,39 @@
 import "mocha";
 import { assert } from "chai";
 import type { hethers } from "@hashgraph/hethers";
+import { hethers as hethersObj } from "@hashgraph/hethers";
 import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 import { Artifact } from "hardhat/types";
 import { HethersProviderWrapper } from "../src/internal/hethers-provider-wrapper";
 import { useEnvironment } from "./helpers";
 import { SignerWithAddress } from "../src/internal/signers";
+import path from 'path';
+import dotenv from "dotenv";
+dotenv.config({path: path.resolve(__dirname, '../.env')});
 
 describe("Hethers plugin", function() {
   useEnvironment("hardhat-project", "testnet");
+  let wallet1: hethers.Wallet, wallet2: hethers.Wallet;
+
+  before(function() {
+    wallet1 = new hethersObj.Wallet({
+      // @ts-ignore
+      "account": process.env['TESTNET_ACCOUNT_ID_1'],
+      // @ts-ignore
+      "privateKey": process.env['TESTNET_PRIVATEKEY_1']
+    });
+
+    wallet2 = new hethersObj.Wallet({
+      // @ts-ignore
+      "account": process.env['TESTNET_ACCOUNT_ID_2'],
+      // @ts-ignore
+      "privateKey": process.env['TESTNET_PRIVATEKEY_2']
+    });
+  })
+  
   describe("Provider", function() {
     it("should be able to call getBalance()", async function() {
-      let balance = (await this.env.hethers.provider.getBalance("0.0.28542425")).toString();
+      let balance = (await this.env.hethers.provider.getBalance(wallet1.account)).toString();
       assert.strictEqual(balance > 0, true);
     });
   });
@@ -28,27 +50,27 @@ describe("Hethers plugin", function() {
     let signer: SignerWithAddress;
     it("should be able to get a signer via accountId and privateKey", async function() {
       signer = await this.env.hethers.getSigner({
-        "account": "0.0.29631749",
-        "privateKey": "0x18a2ac384f3fa3670f71fc37e2efbf4879a90051bb0d437dd8cbd77077b24d9b"
+        "account": wallet1.account,
+        "privateKey": wallet1.privateKey
       });
 
       assert.strictEqual(signer.constructor.name, "SignerWithAddress");
     });
     it("should be able to sign a transaction", async function() {
       const signedTx = await signer.signTransaction({
-        to: "0.0.29631750",
+        to: wallet2.account,
         value: 1000
       });
 
       assert.strictEqual(signedTx != null && signedTx != "0x", true);
     });
     it("should be able to transfer tokens with the signer", async function() {
-      const balanceBefore = (await this.env.hethers.provider.getBalance("0.0.29631750")).toString();
+      const balanceBefore = (await this.env.hethers.provider.getBalance(wallet2.account)).toString();
       await signer.sendTransaction({
-        to: "0.0.29631750",
+        to: wallet2.account,
         value: 142
       });
-      const balanceAfter = (await this.env.hethers.provider.getBalance("0.0.29631750")).toString();
+      const balanceAfter = (await this.env.hethers.provider.getBalance(wallet2.account)).toString();
 
       assert.strictEqual(balanceAfter - balanceBefore, 142);
     });
@@ -72,23 +94,25 @@ describe("Hethers plugin", function() {
         const sigs = await this.env.hethers.getSigners();
         assert.equal(
           await sigs[0].getAddress(),
-          "0x0000000000000000000000000000000001c42505"
+          wallet1.address
         );
       });
 
       it("should expose the identity synchronously", async function() {
         const sigs = await this.env.hethers.getSigners();
+        const identity = wallet1._signingKey();
+
         assert.equal(
           sigs[0].identity.curve,
-          "secp256k1"
+          identity.curve
         );
         assert.equal(
           sigs[0].identity.publicKey,
-          "0x041477154d6d1be6a6d899f295c049a94f227f97299ac7853e4dbc41a1763fdada8a369289fcf3c5fc47c74993e7a934bb74171f45ba36eee1acd2e6d131c62daf"
+          identity.publicKey
         );
         assert.equal(
           sigs[0].identity.compressedPublicKey,
-          "0x031477154d6d1be6a6d899f295c049a94f227f97299ac7853e4dbc41a1763fdada"
+          identity.compressedPublicKey
         );
       });
 
@@ -96,7 +120,7 @@ describe("Hethers plugin", function() {
         const sigs = await this.env.hethers.getSigners();
         assert.equal(
           sigs[0].address,
-          "0x0000000000000000000000000000000001c42505"
+          wallet1.address
         );
       });
     });
@@ -106,10 +130,11 @@ describe("Hethers plugin", function() {
         const [sig] = await this.env.hethers.getSigners();
 
         const result = await sig.signMessage("hello");
+        const hethersResult = await wallet1.signMessage("hello");
 
         assert.equal(
           result,
-          "0x94da28ccf875bc2871edc6af05f437e658293bdd789b73988adea06cfa6aad49196413552d6aa3ae40afd2b44c84f1a123dee218447c774714b158757e323dad1c"
+          hethersResult
         );
       });
 
