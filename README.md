@@ -75,7 +75,7 @@ const contractFactoryWithCustomSigner = await hre.hethers.getContractFactory('Gr
 - `function getContractFactory(name: string, factoryOptions: FactoryOptions): Promise<hethers.ContractFactory>;`
 ```typescript
 const libraryFactory = await hre.hethers.getContractFactory("contracts/TestContractLib.sol:TestLibrary");
-const library = await libraryFactory.deploy({gasLimit: 100000});
+const library = await libraryFactory.deploy();
 
 const contract = await hre.hethers.getContractFactory("Greeter", {
     libraries: {
@@ -94,7 +94,7 @@ const contract = await hre.hethers.getContractFactory(greeterArtifact.abi, greet
 - `function getContractAt(name: string, address: string, signer?: hethers.Signer): Promise<hethers.Contract>;`
 ```typescript
 const Greeter = await hre.hethers.getContractFactory("Greeter");
-const deployedGreeter = await Greeter.deploy({gasLimit: 100000});
+const deployedGreeter = await Greeter.deploy();
 
 const contract = await hre.hethers.getContractAt("Greeter", deployedGreeter.address);
 ```
@@ -119,7 +119,7 @@ const greeterArtifact = await hre.artifacts.readArtifact("Greeter");
 const libraryFactory = await hre.hethers.getContractFactory(
     "contracts/TestContractLib.sol:TestLibrary"
 );
-const library = await libraryFactory.deploy({gasLimit: 100000});
+const library = await libraryFactory.deploy();
 
 const contract = await hre.hethers.getContractFactory(greeterArtifact, {
     libraries: {
@@ -131,7 +131,7 @@ const contract = await hre.hethers.getContractFactory(greeterArtifact, {
 - `function getContractAtFromArtifact(artifact: Artifact, address: string, signer?: hethers.Signer): Promise<hethers.Contract>;`
 ```typescript
 const Greeter = await hre.hethers.getContractFactory("Greeter");
-const deployedGreeter = await Greeter.deploy({gasLimit: 100000});
+const deployedGreeter = await Greeter.deploy();
 const greeterArtifact = await hre.artifacts.readArtifact("Greeter");
 
 const contract = await hre.getContractAtFromArtifact(greeterArtifact, deployedGreeter.address);

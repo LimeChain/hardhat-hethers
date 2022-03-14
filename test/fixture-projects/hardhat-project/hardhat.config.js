@@ -4,10 +4,9 @@ module.exports = {
   solidity: "0.8.4",
   defaultNetwork: "testnet",
   hedera: {
-    gasLimit: 50000,
+    gasLimit: 300000,
     networks: {
       testnet: {
-        gas: 100000,
         accounts: [
           {
             "account": "0.0.29631749",
