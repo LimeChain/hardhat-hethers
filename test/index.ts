@@ -5,7 +5,7 @@ import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 import { Artifact } from "hardhat/types";
 import { HethersProviderWrapper } from "../src/internal/hethers-provider-wrapper";
 import { useEnvironment } from "./helpers";
-import { SignerWithAddress } from "../src/signers";
+import { SignerWithAddress } from "../src/internal/signers";
 
 describe("Hethers plugin", function() {
   useEnvironment("hardhat-project", "testnet");
@@ -46,11 +46,11 @@ describe("Hethers plugin", function() {
       const balanceBefore = (await this.env.hethers.provider.getBalance("0.0.29631750")).toString();
       await signer.sendTransaction({
         to: "0.0.29631750",
-        value: 1000
+        value: 142
       });
       const balanceAfter = (await this.env.hethers.provider.getBalance("0.0.29631750")).toString();
 
-      assert.strictEqual(balanceAfter - balanceBefore, 1000);
+      assert.strictEqual(balanceAfter - balanceBefore, 142);
     });
   });
 
@@ -120,11 +120,12 @@ describe("Hethers plugin", function() {
         const tx = Greeter.getDeployTransaction();
 
         try {
-          assert.throws(() => sig.signTransaction(tx));
+          await sig.signTransaction(tx);
         } catch (err) {
           assert.exists(err);
+          return;
         }
-
+        assert.isTrue(false);
       });
 
       it("should return the balance of the account", async function() {
@@ -141,10 +142,12 @@ describe("Hethers plugin", function() {
         const Greeter = await this.env.hethers.getContractFactory("Greeter");
         const tx = Greeter.getDeployTransaction();
         try {
-          assert.throws(async () => await sig.call(tx));
+          await sig.call(tx);
         } catch (err) {
           assert.exists(err);
+          return;
         }
+        assert.isTrue(false);
       });
 
       it("should send a transaction", async function() {
@@ -188,7 +191,7 @@ describe("Hethers plugin", function() {
 
     describe("getContractFactory", function() {
       this.timeout(60000);
-      describe("By name", function() {
+      describe("by name", function() {
         it("should return a contract factory", async function() {
           // It's already compiled in artifacts/
           const contract = await this.env.hethers.getContractFactory(
@@ -829,14 +832,31 @@ describe("Hethers plugin", function() {
         });
 
         it("Should be able to send txs and make calls", async function() {
+          const signers = await this.env.hethers.getSigners();
           const greeter = await this.env.hethers.getContractAtFromArtifact(
             greeterArtifact,
             deployedGreeter.address
           );
 
           assert.equal(await greeter.functions.greet(), "Hi");
-          await greeter.functions.setGreeting("Hola");
+          const receipt = await greeter.functions.setGreeting("Hola");
           assert.equal(await greeter.functions.greet(), "Hola");
+          assert.equal(receipt.from, signers[0].address);
+        });
+
+        it("Should be able to connect different signer and send txs and make calls", async function() {
+          const signers = await this.env.hethers.getSigners();
+
+          const greeter = await this.env.hethers.getContractAtFromArtifact(
+            greeterArtifact,
+            deployedGreeter.address
+          );
+
+          const receipt = await greeter.connect(signers[1]).functions.setGreeting("Hola from the second signer");
+
+          assert.equal(await greeter.functions.greet(), "Hola from the second signer");
+          assert.equal(receipt.from, signers[1].address);
+          assert.notEqual(receipt.from, signers[0].address);
         });
 
         describe("with custom signer", function() {

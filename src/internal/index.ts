@@ -10,10 +10,7 @@ import {
     getContractFactory,
     getContractFactoryFromArtifact,
 } from "./helpers";
-import {
-    HederaHardhatConfig,
-    HederaHardhatRuntimeEnvironment
-} from "./type-extensions";
+import {HederaHardhatConfig, HederaHardhatRuntimeEnvironment} from "./type-extensions";
 
 extendConfig(
     (config: HederaHardhatConfig) => {

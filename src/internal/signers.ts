@@ -1,21 +1,27 @@
 import {hethers} from "@hashgraph/hethers";
-import {HederaAccount} from "./internal/type-extensions";
-import { Deferrable } from "@ethersproject/properties";
-import { TransactionRequest } from "@hethers/abstract-provider";
-import { NomicLabsHardhatPluginError } from "hardhat/plugins";
+import {HederaAccount} from "./type-extensions";
+import {Deferrable} from "@ethersproject/properties";
+import {TransactionRequest} from "@hethers/abstract-provider";
+import {NomicLabsHardhatPluginError} from "hardhat/plugins";
+
 const pluginName = "hardhat-hethers";
 
 export class SignerWithAddress extends hethers.Wallet {
     // @ts-ignore
     address: string;
 
-    private populateDefaultGasLimit(tx: TransactionRequest): TransactionRequest {
+    private static populateDefaultGasLimit(tx: TransactionRequest): TransactionRequest {
+        // do not force add gasLimit, if the user wants to execute a simple crypto transfer
+        if (tx.to && tx.value && Object.keys(tx).length == 2) {
+            return tx;
+        }
+
         if (!tx.gasLimit) {
             const env = require('hardhat');
             if (!env.config.hedera.gasLimit) {
                 throw new NomicLabsHardhatPluginError(
-                  pluginName,
-                  `No default gas limit found. Please specify a default 'gasLimit' value in your hardhat.config.js: > config > hedera > gasLimit`
+                    pluginName,
+                    `No default gas limit found. Please specify a default 'gasLimit' value in your hardhat.config.js: > config > hedera > gasLimit`
                 );
             }
 
@@ -48,12 +54,12 @@ export class SignerWithAddress extends hethers.Wallet {
     }
 
     public signTransaction(transaction: hethers.providers.TransactionRequest): Promise<string> {
-        transaction = this.populateDefaultGasLimit(transaction);
+        transaction = SignerWithAddress.populateDefaultGasLimit(transaction);
         return this._signer.signTransaction(transaction);
     }
 
     public sendTransaction(transaction: hethers.providers.TransactionRequest): Promise<hethers.providers.TransactionResponse> {
-        transaction = this.populateDefaultGasLimit(transaction);
+        transaction = SignerWithAddress.populateDefaultGasLimit(transaction);
         return this._signer.sendTransaction(transaction);
     }
 
@@ -70,11 +76,11 @@ export class SignerWithAddress extends hethers.Wallet {
     }
 
     public async call(txRequest: Deferrable<TransactionRequest>): Promise<string> {
-        txRequest = this.populateDefaultGasLimit(<TransactionRequest>txRequest);
+        txRequest = SignerWithAddress.populateDefaultGasLimit(<TransactionRequest>txRequest);
         if (!txRequest.to) {
             throw new NomicLabsHardhatPluginError(
-              pluginName,
-              `The transaction is missing a required field: 'to'`
+                pluginName,
+                `The transaction is missing a required field: 'to'`
             );
         }
         return this._signer.call(txRequest);
