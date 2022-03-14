@@ -832,14 +832,31 @@ describe("Hethers plugin", function() {
         });
 
         it("Should be able to send txs and make calls", async function() {
+          const signers = await this.env.hethers.getSigners();
           const greeter = await this.env.hethers.getContractAtFromArtifact(
             greeterArtifact,
             deployedGreeter.address
           );
 
           assert.equal(await greeter.functions.greet(), "Hi");
-          await greeter.functions.setGreeting("Hola");
+          const receipt = await greeter.functions.setGreeting("Hola");
           assert.equal(await greeter.functions.greet(), "Hola");
+          assert.equal(receipt.from, signers[0].address);
+        });
+
+        it("Should be able to connect different signer and send txs and make calls", async function() {
+          const signers = await this.env.hethers.getSigners();
+
+          const greeter = await this.env.hethers.getContractAtFromArtifact(
+            greeterArtifact,
+            deployedGreeter.address
+          );
+
+          const receipt = await greeter.connect(signers[1]).functions.setGreeting("Hola from the second signer");
+
+          assert.equal(await greeter.functions.greet(), "Hola from the second signer");
+          assert.equal(receipt.from, signers[1].address);
+          assert.notEqual(receipt.from, signers[0].address);
         });
 
         describe("with custom signer", function() {
