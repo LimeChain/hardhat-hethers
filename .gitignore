@@ -101,3 +101,5 @@ typings/
 
 !.eslintrc.js
 .idea
+
+tsconfig.tsbuildinfo
