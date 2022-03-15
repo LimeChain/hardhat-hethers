@@ -46,7 +46,7 @@ describe("Hethers plugin", function() {
       assert.strictEqual(signers[0].constructor.name, "SignerWithAddress");
     });
   });
-  describe("Signer", function() {
+  describe.only("Signer", function() {
     let signer: SignerWithAddress;
     it("should be able to get a signer via accountId and privateKey", async function() {
       signer = await this.env.hethers.getSigner({
@@ -71,8 +71,7 @@ describe("Hethers plugin", function() {
         value: 142
       });
       const balanceAfter = (await this.env.hethers.provider.getBalance(wallet2.account)).toString();
-
-      assert.strictEqual(balanceAfter - balanceBefore, 142);
+      assert.strictEqual(this.env.hethers.BigNumber.from(balanceAfter) - this.env.hethers.BigNumber.from(balanceBefore), 142);
     });
   });
 
