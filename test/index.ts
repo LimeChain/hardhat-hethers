@@ -46,7 +46,7 @@ describe("Hethers plugin", function() {
       assert.strictEqual(signers[0].constructor.name, "SignerWithAddress");
     });
   });
-  describe.only("Signer", function() {
+  describe("Signer", function() {
     let signer: SignerWithAddress;
     it("should be able to get a signer via accountId and privateKey", async function() {
       signer = await this.env.hethers.getSigner({
