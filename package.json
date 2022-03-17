@@ -9,11 +9,10 @@
   "main": "internal/index.js",
   "types": "internal/index.d.ts",
   "keywords": [
-    "ethereum",
     "smart-contracts",
     "hardhat",
     "hardhat-plugin",
-    "ethers.js"
+    "hethers.js"
   ],
   "scripts": {
     "lint": "yarn node_modules/.bin/prettier --check && yarn eslint",
