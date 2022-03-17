@@ -1,5 +1,5 @@
 {
-  "name": "@limechain/hardhat-hethers",
+  "name": "hardhat-hethers",
   "version": "1.0.0",
   "description": "Hardhat plugin for hethers",
   "homepage": "https://github.com/LimeChain/hardhat-hethers",
