@@ -9,6 +9,7 @@
   "main": "internal/index.js",
   "types": "internal/index.d.ts",
   "keywords": [
+    "hedera",
     "smart-contracts",
     "hardhat",
     "hardhat-plugin",
