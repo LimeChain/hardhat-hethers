@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/npm/v/@limechain/hardhat-hethers.svg)](https://www.npmjs.com/package/@limechain/hardhat-hethers) [![hardhat](https://hardhat.org/buidler-plugin-badge.svg?1)](https://hardhat.org)
+[![npm](https://img.shields.io/npm/v/hardhat-hethers.svg)](https://www.npmjs.com/package/hardhat-hethers) [![hardhat](https://hardhat.org/buidler-plugin-badge.svg?1)](https://hardhat.org)
 
 # hardhat-hethers
 

@@ -48,6 +48,7 @@ describe("Hethers plugin", function() {
     });
   });
   describe("Signer", function() {
+    this.timeout(60000);
     let signer: SignerWithAddress;
     it("should be able to get a signer via accountId and privateKey", async function() {
       signer = await this.env.hethers.getSigner({
