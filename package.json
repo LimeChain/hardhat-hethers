@@ -1,5 +1,5 @@
 {
-  "name": "@limechain/hardhat-hethers",
+  "name": "hardhat-hethers",
   "version": "1.0.0",
   "description": "Hardhat plugin for hethers",
   "homepage": "https://github.com/LimeChain/hardhat-hethers",
@@ -9,11 +9,11 @@
   "main": "internal/index.js",
   "types": "internal/index.d.ts",
   "keywords": [
-    "ethereum",
+    "hedera",
     "smart-contracts",
     "hardhat",
     "hardhat-plugin",
-    "ethers.js"
+    "hethers.js"
   ],
   "scripts": {
     "lint": "yarn node_modules/.bin/prettier --check && yarn eslint",
@@ -44,19 +44,20 @@
     "@typescript-eslint/eslint-plugin": "4.29.2",
     "@typescript-eslint/parser": "4.29.2",
     "chai": "^4.2.0",
+    "dotenv": "^16.0.0",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.24.1",
     "eslint-plugin-prettier": "3.4.0",
     "hardhat": "^2.0.0",
-    "mocha": "^7.2.0",
+    "mocha": "^9.2.2",
     "prettier": "2.4.1",
     "rimraf": "^3.0.2",
     "ts-node": "^8.1.0",
     "typescript": "~4.5.2"
   },
   "peerDependencies": {
-    "@hashgraph/hethers": "^1.0.0",
+    "@hashgraph/hethers": "^1.0.3",
     "hardhat": "^2.0.0"
   }
 }
