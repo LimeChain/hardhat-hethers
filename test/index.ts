@@ -29,7 +29,8 @@ describe("Hethers plugin", function() {
       // @ts-ignore
       "privateKey": process.env['TESTNET_PRIVATEKEY_2']
     });
-  })
+  });
+  this.timeout(900000);
   
   describe("Provider", function() {
     it("should be able to call getBalance()", async function() {
@@ -215,7 +216,6 @@ describe("Hethers plugin", function() {
     });
 
     describe("getContractFactory", function() {
-      this.timeout(60000);
       describe("by name", function() {
         it("should return a contract factory", async function() {
           // It's already compiled in artifacts/
@@ -573,8 +573,6 @@ describe("Hethers plugin", function() {
 
     describe("getContractFactoryFromArtifact", function() {
 
-      this.timeout(60000);
-
       it("should return a contract factory", async function() {
         const contract = await this.env.hethers.getContractFactoryFromArtifact(
           greeterArtifact
@@ -762,7 +760,6 @@ describe("Hethers plugin", function() {
         });
 
         it("Should be able to detect events", async function() {
-          this.timeout(60000)
 
           const greeter = await this.env.hethers.getContractAt(
             greeterArtifact.abi,
@@ -801,8 +798,6 @@ describe("Hethers plugin", function() {
             );
           });
         });
-
-        this.timeout(60000);
 
         it("should work with linked contracts", async function() {
           const libraryFactory = await this.env.hethers.getContractFactory(

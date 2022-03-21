@@ -11,13 +11,13 @@ This plugin brings to Hardhat the Hedera library `hethers.js`, which allows you 
 ## Installation
 
 ```bash
-npm install --save-dev '@limechain/hardhat-hethers' '@hashgraph/hethers@^1.0.3'
+npm install --save-dev 'hardhat-hethers' '@hashgraph/hethers@^1.0.3'
 ```
 
 And add the following statement to your `hardhat.config.js`:
 
 ```js
-require("@limechain/hardhat-hethers");
+require("hardhat-hethers");
 ```
 
 ## Tasks
@@ -146,7 +146,7 @@ There are no additional steps you need to take for this plugin to work.
 Install it and access hethers through the Hardhat Runtime Environment anywhere you need it (tasks, scripts, tests, etc). For example, in your `hardhat.config.js`:
 
 ```typescript
-require("@limechain/hardhat-hethers");
+require("hardhat-hethers");
 
 // task action function receives the Hardhat Runtime Environment as second argument
 task('getBalance', 'Prints the the balance of "0.0.29631749"', async (_, {hethers}) => {

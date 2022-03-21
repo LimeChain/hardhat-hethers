@@ -42,9 +42,9 @@ export function getInitialHederaProvider(hre: HederaHardhatRuntimeEnvironment): 
     }
 
     const {consensusNodes, mirrorNodeUrl, chainId} = hre.config.networks[networkName];
-    if (consensusNodes?.length && mirrorNodeUrl && chainId && consensusNodes.length) {
+    if (consensusNodes?.length && mirrorNodeUrl && chainId != undefined && consensusNodes.length) {
         let cnNetworkConfig: { [url: string]: string } = {};
-        consensusNodes.forEach((obj: HederaNodeConfig) => {
+        consensusNodes.forEach(function (obj: HederaNodeConfig) {
             cnNetworkConfig[obj.url] = obj.nodeId;
         });
 
