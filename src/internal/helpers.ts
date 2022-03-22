@@ -310,6 +310,7 @@ async function getContractFactoryByAbiAndBytecode(
     if (signer === undefined) {
         const signers = await hre.hethers?.getSigners(hre);
         if (signers && signers.length) {
+            // @ts-ignore
             signer = signers[0];
         }
     }
@@ -355,6 +356,7 @@ export async function getContractAt(
     if (signer === undefined) {
         const signers = await hre.hethers?.getSigners(hre);
         if (signers && signers.length) {
+            // @ts-ignore
             signer = signers[0];
         }
     }

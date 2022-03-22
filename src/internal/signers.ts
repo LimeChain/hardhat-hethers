@@ -31,6 +31,7 @@ export class SignerWithAddress extends hethers.Wallet {
     }
 
     public static async create(signer: hethers.Wallet) {
+        // @ts-ignore
         let signerWithAddress = await new SignerWithAddress(signer._signingKey(), signer);
         // @ts-ignore
         signerWithAddress.address = signer.address;
@@ -63,7 +64,9 @@ export class SignerWithAddress extends hethers.Wallet {
         return this._signer.sendTransaction(transaction);
     }
 
+    // @ts-ignore
     public connect(provider: hethers.providers.BaseProvider): SignerWithAddress {
+        // @ts-ignore
         return new SignerWithAddress(this.identity, this._signer.connect(provider));
     }
 

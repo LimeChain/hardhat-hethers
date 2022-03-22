@@ -7,7 +7,10 @@ export class HethersProviderWrapper extends hethers.providers.BaseProvider {
     constructor(hardhatProvider: hethers.providers.BaseProvider) {
         let networkConfig: { [url: string]: string } = {};
         hardhatProvider.getHederaClient()._network._network.forEach((obj: any) => {
-            networkConfig[obj[0]._address._address] = obj[0]._accountId.toString();
+            const address = obj[0]._address;
+            let addrString = address._address;
+            if (address._port) addrString = `${addrString}:${address._port}`;
+            networkConfig[addrString] = obj[0]._accountId.toString();
         });
 
         super({
