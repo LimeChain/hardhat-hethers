@@ -295,7 +295,7 @@ function defaultNthArgument(fn, n, thisObj, defaultObj) {
     return function (...args: any) {
         let overwritten = args[n] || {};
         overwritten = Object.assign({}, defaultObj, overwritten);
-        return fn.call(thisObj, ...args.slice(0, n - 1), overwritten);
+        return fn.call(thisObj, ...args.slice(0, n), overwritten);
     };
 }
 
