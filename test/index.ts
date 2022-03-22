@@ -482,6 +482,18 @@ describe("Hethers plugin", function() {
           assert.equal(await greeter.functions.greet(), "Hola");
         });
 
+        it("Should be able to deploy contracts with arguments in constructor", async function() {
+          const GreeterWithArgs = await this.env.hethers.getContractFactory("GreeterWithArgs");
+          const greeter = await GreeterWithArgs.deploy("SomeArgument");
+          assert.equal(await greeter.functions.greet(), "SomeArgument");
+        });
+
+        it("Should be able to deploy contracts with arguments in constructor and manually set gasLimit", async function() {
+          const GreeterWithArgs = await this.env.hethers.getContractFactory("GreeterWithArgs");
+          const greeter = await GreeterWithArgs.deploy("SomeArgument", {gasLimit: 300000});
+          assert.equal(await greeter.functions.greet(), "SomeArgument");
+        });
+
         describe("with custom signer", function() {
           it("should return a contract factory connected to the custom signer", async function() {
             // It's already compiled in artifacts/
