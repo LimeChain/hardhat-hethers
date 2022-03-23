@@ -295,7 +295,7 @@ function defaultNthArgument(fn, n, thisObj, defaultObj) {
     return function (...args: any) {
         let overwritten = args[n] || {};
         overwritten = Object.assign({}, defaultObj, overwritten);
-        return fn.call(thisObj, ...args.slice(0, n - 1), overwritten);
+        return fn.call(thisObj, ...args.slice(0, n), overwritten);
     };
 }
 
@@ -310,6 +310,7 @@ async function getContractFactoryByAbiAndBytecode(
     if (signer === undefined) {
         const signers = await hre.hethers?.getSigners(hre);
         if (signers && signers.length) {
+            // @ts-ignore
             signer = signers[0];
         }
     }
@@ -355,6 +356,7 @@ export async function getContractAt(
     if (signer === undefined) {
         const signers = await hre.hethers?.getSigners(hre);
         if (signers && signers.length) {
+            // @ts-ignore
             signer = signers[0];
         }
     }

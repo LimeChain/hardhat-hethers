@@ -19,6 +19,18 @@ module.exports = {
             "privateKey": process.env['TESTNET_PRIVATEKEY_2']
           }
         ]
+      },
+      previewnet: {
+        accounts: [
+          {
+            "account": process.env['PREVIEWNET_ACCOUNT_ID_1'],
+            "privateKey": process.env['PREVIEWNET_PRIVATEKEY_1']
+          },
+          {
+            "account": process.env['PREVIEWNET_ACCOUNT_ID_2'],
+            "privateKey": process.env['PREVIEWNET_PRIVATEKEY_2']
+          }
+        ]
       }
     }
   },
