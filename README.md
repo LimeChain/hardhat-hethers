@@ -11,7 +11,7 @@ This plugin brings to Hardhat the Hedera library `hethers.js`, which allows you 
 ## Installation
 
 ```bash
-npm install --save-dev 'hardhat-hethers' '@hashgraph/hethers@^1.0.3'
+npm install --save-dev 'hardhat-hethers'
 ```
 
 And add the following statement to your `hardhat.config.js`:
