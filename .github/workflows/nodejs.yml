@@ -1,0 +1,48 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+env:
+  testnet_account_id_1: ${{ secrets.TESTNET_ACCOUNT_ID_1 }}
+  testnet_privatekey_1: ${{ secrets.TESTNET_PRIVATEKEY_1 }}
+  testnet_account_id_2: ${{ secrets.TESTNET_ACCOUNT_ID_2 }}
+  testnet_privatekey_2: ${{ secrets.TESTNET_PRIVATEKEY_2 }}
+  previewnet_account_id_1: ${{ secrets.PREVIEWNET_ACCOUNT_ID_1 }}
+  previewnet_privatekey_1: ${{ secrets.PREVIEWNET_PRIVATEKEY_1 }}
+  previewnet_account_id_2: ${{ secrets.PREVIEWNET_ACCOUNT_ID_2 }}
+  previewnet_privatekey_2: ${{ secrets.PREVIEWNET_PRIVATEKEY_2 }}
+  run_test_on: ${{ secrets.RUN_TEST_ON }}
+
+jobs:
+
+  test-node:
+
+    name: Tests
+
+    runs-on: macos-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [ 12.x, 17.x ]
+
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Run tests
+        run: TESTNET_ACCOUNT_ID_1=$testnet_account_id_1 TESTNET_PRIVATEKEY_1=$testnet_privatekey_1 TESTNET_ACCOUNT_ID_2=$testnet_account_id_2 TESTNET_PRIVATEKEY_2=$testnet_privatekey_2 PREVIEWNET_ACCOUNT_ID_1=$previewnet_account_id_1 PREVIEWNET_PRIVATEKEY_1=$previewnet_privatekey_1 PREVIEWNET_ACCOUNT_ID_2=$previewnet_account_id_2 PREVIEWNET_PRIVATEKEY_2=$previewnet_privatekey_2 RUN_TEST_ON=$run_test_on npm run test

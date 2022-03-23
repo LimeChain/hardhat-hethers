@@ -1,0 +1,5 @@
+.github
+scripts
+test
+build-test
+.env-template

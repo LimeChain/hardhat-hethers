@@ -1,0 +1,64 @@
+{
+  "name": "hardhat-hethers",
+  "version": "1.0.0",
+  "description": "Hardhat plugin for hethers",
+  "homepage": "https://github.com/LimeChain/hardhat-hethers",
+  "repository": "github:LimeChain/hardhat-hethers",
+  "author": "LimeChain",
+  "license": "MIT",
+  "main": "internal/index.js",
+  "types": "internal/index.d.ts",
+  "keywords": [
+    "hedera",
+    "smart-contracts",
+    "hardhat",
+    "hardhat-plugin",
+    "hethers.js"
+  ],
+  "scripts": {
+    "lint": "yarn node_modules/.bin/prettier --check && yarn eslint",
+    "lint:fix": "yarn node_modules/.bin/prettier --write && yarn eslint --fix",
+    "eslint": "node_modules/.bin/eslint 'src/**/*.ts' 'test/**/*.ts'",
+    "prettier": "node_modules/.bin/prettier \\\"**/*.{js,md,json}\\\"",
+    "test": "node_modules/.bin/mocha --recursive \\\"test/**/*.ts\\\" --exit",
+    "build": "npm run clean && node_modules/.bin/tsc --build .",
+    "clean": "node_modules/.bin/rimraf dist internal types *.{d.ts,js}{,.map} build-test tsconfig.tsbuildinfo"
+  },
+  "files": [
+    "dist/src/",
+    "src/",
+    "internal/",
+    "types/",
+    "*.d.ts",
+    "*.d.ts.map",
+    "*.js",
+    "*.js.map",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@hashgraph/hethers": "^1.1.0",
+    "@types/chai": "^4.2.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^12.0.0",
+    "@typescript-eslint/eslint-plugin": "4.29.2",
+    "@typescript-eslint/parser": "4.29.2",
+    "axios": "^0.26.1",
+    "chai": "^4.2.0",
+    "dotenv": "^16.0.0",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.24.1",
+    "eslint-plugin-prettier": "3.4.0",
+    "hardhat": "^2.0.0",
+    "mocha": "^9.2.2",
+    "prettier": "2.4.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.1.0",
+    "typescript": "~4.5.2"
+  },
+  "peerDependencies": {
+    "@hashgraph/hethers": "^1.1.0",
+    "hardhat": "^2.0.0"
+  }
+}

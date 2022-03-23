@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig-common.json",
+  "compilerOptions": {
+    "outDir": "./build-test",
+    "rootDirs": [
+      "./test"
+    ],
+    "composite": true
+  },
+  "include": [
+    "./test/**/*.ts"
+  ],
+  "exclude": [
+    "./node_modules",
+    "./test/**/hardhat.config.ts"
+  ],
+  "references": [
+    {
+      "path": "./src"
+    }
+  ]
+}
