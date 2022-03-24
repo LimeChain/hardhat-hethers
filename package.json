@@ -1,6 +1,6 @@
 {
   "name": "hardhat-hethers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hardhat plugin for hethers",
   "homepage": "https://github.com/LimeChain/hardhat-hethers",
   "repository": "github:LimeChain/hardhat-hethers",
