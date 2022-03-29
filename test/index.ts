@@ -492,6 +492,43 @@ describe("Hethers plugin", function() {
           assert.equal(await greeter.functions.greet(), "SomeArgument");
         });
 
+        it("Should throw the correct error messages when deploying with incorrect number of arguments", async function() {
+          const GreeterWithArgs = await this.env.hethers.getContractFactory("GreeterWithArgs");
+
+          try {
+            const greeter = await GreeterWithArgs.deploy("SomeArgument", "ExtraArgument");
+          } catch (err: any) {
+            assert.exists(err);
+            assert.equal(err.code, 'UNEXPECTED_ARGUMENT');
+            assert.equal(err.reason, 'too many arguments:  in Contract constructor');
+            assert.equal(err.count, 2);
+            assert.equal(err.expectedCount, 1);
+          }
+
+          try {
+            const greeter = await GreeterWithArgs.deploy("SomeArgument", "ExtraArgument", "ExtraExtraArgument");
+          } catch (err: any) {
+            assert.exists(err);
+            assert.equal(err.code, 'UNEXPECTED_ARGUMENT');
+            assert.equal(err.reason, 'too many arguments:  in Contract constructor');
+            assert.equal(err.count, 3);
+            assert.equal(err.expectedCount, 1);
+          }
+
+          try {
+            const greeter = await GreeterWithArgs.deploy();
+          } catch (err: any) {
+            assert.exists(err);
+            assert.equal(err.code, 'MISSING_ARGUMENT');
+            assert.equal(err.reason, 'missing argument:  in Contract constructor');
+            assert.equal(err.count, 0);
+            assert.equal(err.expectedCount, 1);
+            return;
+          }
+
+          assert.isTrue(false);
+        });
+
         it("Should be able to deploy contracts with arguments in constructor and manually set gasLimit", async function() {
           const GreeterWithArgs = await this.env.hethers.getContractFactory("GreeterWithArgs");
           const greeter = await GreeterWithArgs.deploy("SomeArgument", {gasLimit: 300000});
