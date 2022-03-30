@@ -293,6 +293,20 @@ Learn more about linking contracts at https://hardhat.org/plugins/nomiclabs-hard
 // @ts-ignore
 function defaultNthArgument(fn, n, thisObj, defaultObj) {
     return function (...args: any) {
+        let receivedArgs = args.length;
+
+        // Check if the last argument is an options object
+        if (typeof args[receivedArgs - 1] === 'object') {
+            // don't count it
+            receivedArgs--;
+        }
+
+        if (receivedArgs !== n) {
+            // call the function without the default gas limit appended to
+            // force it to throw a MISSING_ARGUMENT or an UNEXPECTED_ARGUMENT error
+            return fn.call(thisObj, ...args.slice(0, receivedArgs));
+        }
+
         let overwritten = args[n] || {};
         overwritten = Object.assign({}, defaultObj, overwritten);
         return fn.call(thisObj, ...args.slice(0, n), overwritten);
