@@ -20,6 +20,63 @@ And add the following statement to your `hardhat.config.js`:
 require("hardhat-hethers");
 ```
 
+Add network configuration in `hardhat.config.js`:
+
+```js
+module.exports = {
+  defaultNetwork: 'testnet',  // The selected default network. It has to match the name of one of the configured networks.
+  hedera: {
+    gasLimit: 300000, // Default gas limit. It is added to every contract transaction, but can be overwritten if required.
+    networks: {
+      testnet: {      // The name of the network, e.g. mainnet, testnet, previewnet, customNetwork
+        accounts: [   // An array of predefined Externally Owned Accounts
+          {
+            "account": '0.0.123',
+            "privateKey": '0x...'
+          },
+          ...
+        ]
+      },
+      previewnet: {
+        accounts: [
+          {
+            "account": '0.0.123',
+            "privateKey": '0x...'
+          },
+          ...
+        ]
+      },
+      ...
+    },
+    // Custom networks require additional configuration - for conesensusNodes and mirrorNodeUrl
+    // The following is an integration example for the local-hedera package
+    customNetwork: {
+      consensusNodes: [
+        {
+          url: '127.0.0.1:50211',
+          nodeId: '0.0.3'
+        }
+      ],
+      mirrorNodeUrl: 'http://127.0.0.1:5551',
+      chainId: 0,
+      accounts: [
+        {
+          'account': '0.0.1001',
+          'privateKey': '0x7f109a9e3b0d8ecfba9cc23a3614433ce0fa7ddcc80f2a8f10b222179a5a80d6'
+        },
+        {
+          'account': '0.0.1002',
+          'privateKey': '0x6ec1f2e7d126a74a1d2ff9e1c5d90b92378c725e506651ff8bb8616a5c724628'
+        },
+      ]
+    }
+  }
+};
+```
+
+Read more about Externally Owned Accounts [here](https://docs.hedera.com/hethers/application-programming-interface/signers#externallyownedaccount).
+
+
 ## Tasks
 
 This plugin creates no additional tasks.
@@ -60,7 +117,7 @@ const signers = await hre.hethers.getSingers();
 ```typescript
 const signer = await hre.hethers.getSigner({
     "account": "0.0.123",
-    "privateKey": "0x12a2ac384f3fa3770f71fc37e2efbf4879a90051bb0d427dd8cbd77777b12d9b"
+    "privateKey": "0x..."
 });
 ```
 
