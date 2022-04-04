@@ -20,6 +20,41 @@ And add the following statement to your `hardhat.config.js`:
 require("hardhat-hethers");
 ```
 
+Add network configuration in `hardhat.config.js`:
+
+```js
+module.exports = {
+  defaultNetwork: 'testnet',  // The selected default network. It has to match the name of one of the configured networks.
+  hedera: {
+    gasLimit: 300000, // Default gas limit. It is added to every contract transaction, but can be overwritten if required.
+    networks: {
+      testnet: {      // The name of the network, e.g. mainnet, testnet, previewnet, customNetwork
+        accounts: [   // An array of predefined Externally Owned Accounts
+          {
+            "account": '0.0.123',
+            "privateKey": '0x...'
+          },
+          ...
+        ]
+      },
+      previewnet: {
+        accounts: [
+          {
+            "account": '0.0.123',
+            "privateKey": '0x...'
+          },
+          ...
+        ]
+      },
+      ...
+    }
+  }
+};
+```
+
+Read more about Externally Owned Accounts [here](https://docs.hedera.com/hethers/application-programming-interface/signers#externallyownedaccount).
+
+
 ## Tasks
 
 This plugin creates no additional tasks.
@@ -60,7 +95,7 @@ const signers = await hre.hethers.getSingers();
 ```typescript
 const signer = await hre.hethers.getSigner({
     "account": "0.0.123",
-    "privateKey": "0x12a2ac384f3fa3770f71fc37e2efbf4879a90051bb0d427dd8cbd77777b12d9b"
+    "privateKey": "0x..."
 });
 ```
 
