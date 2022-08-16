@@ -2,7 +2,7 @@
 
 
 ---
-#**Deprecated!** This package has been deprecated, please use [this one](https://www.npmjs.com/package/@hashgraph/hardhat-hethers) instead
+**Deprecated!** This package has been deprecated, please use [this one](https://www.npmjs.com/package/@hashgraph/hardhat-hethers) instead
 ---
 
 
