@@ -1,5 +1,12 @@
 [![npm](https://img.shields.io/npm/v/hardhat-hethers.svg)](https://www.npmjs.com/package/hardhat-hethers) [![hardhat](https://hardhat.org/buidler-plugin-badge.svg?1)](https://hardhat.org)
 
+
+---
+#**Deprecated!** This package has been deprecated, please use [this one](https://www.npmjs.com/package/@hashgraph/hardhat-hethers) instead
+---
+
+
+
 # hardhat-hethers
 
 [Hardhat](https://hardhat.org) plugin for integration with [hethers.js](https://github.com/hashgraph/hethers.js).
